@@ -1,0 +1,232 @@
+[
+  {
+    "id": "washerwoman",
+    "name": "Washerwoman",
+    "team": "Townsfolk",
+    "first": {
+      "order": 33,
+      "action": "Wake the Washerwoman.",
+      "detail": "Show a Townsfolk token, then point to two players, one of whom is that character."
+    },
+    "other": null
+  },
+  {
+    "id": "librarian",
+    "name": "Librarian",
+    "team": "Townsfolk",
+    "first": {
+      "order": 34,
+      "action": "Wake the Librarian.",
+      "detail": "Show an Outsider token, then point to two players, one of whom is that character; show zero if no Outsiders are in play."
+    },
+    "other": null
+  },
+  {
+    "id": "investigator",
+    "name": "Investigator",
+    "team": "Townsfolk",
+    "first": {
+      "order": 35,
+      "action": "Wake the Investigator.",
+      "detail": "Show a Minion token, then point to two players, one of whom is that character."
+    },
+    "other": null
+  },
+  {
+    "id": "chef",
+    "name": "Chef",
+    "team": "Townsfolk",
+    "first": {
+      "order": 36,
+      "action": "Wake the Chef.",
+      "detail": "Show the number of pairs of neighboring evil players."
+    },
+    "other": null
+  },
+  {
+    "id": "empath",
+    "name": "Empath",
+    "team": "Townsfolk",
+    "first": {
+      "order": 37,
+      "action": "Wake the Empath.",
+      "detail": "Show the number of their alive evil neighbors."
+    },
+    "other": {
+      "order": 53,
+      "action": "Wake the Empath.",
+      "detail": "Show the number of their alive evil neighbors."
+    }
+  },
+  {
+    "id": "fortune_teller",
+    "name": "Fortune Teller",
+    "team": "Townsfolk",
+    "first": {
+      "order": 38,
+      "action": "Wake the Fortune Teller.",
+      "detail": "They choose two players. Nod if either registers as a Demon."
+    },
+    "other": {
+      "order": 54,
+      "action": "Wake the Fortune Teller.",
+      "detail": "They choose two players. Nod if either registers as a Demon."
+    }
+  },
+  {
+    "id": "undertaker",
+    "name": "Undertaker",
+    "team": "Townsfolk",
+    "first": null,
+    "other": {
+      "order": 55,
+      "action": "Wake the Undertaker if a player was executed today.",
+      "detail": "Show the executed player's character token."
+    }
+  },
+  {
+    "id": "monk",
+    "name": "Monk",
+    "team": "Townsfolk",
+    "first": null,
+    "other": {
+      "order": 12,
+      "action": "Wake the Monk.",
+      "detail": "They choose another player to protect from the Demon tonight."
+    }
+  },
+  {
+    "id": "ravenkeeper",
+    "name": "Ravenkeeper",
+    "team": "Townsfolk",
+    "first": null,
+    "other": {
+      "order": 52,
+      "action": "Wake the Ravenkeeper if they died tonight.",
+      "detail": "They choose a player; show that player's character token."
+    }
+  },
+  {
+    "id": "virgin",
+    "name": "Virgin",
+    "team": "Townsfolk",
+    "first": null,
+    "other": null
+  },
+  {
+    "id": "slayer",
+    "name": "Slayer",
+    "team": "Townsfolk",
+    "first": null,
+    "other": null
+  },
+  {
+    "id": "soldier",
+    "name": "Soldier",
+    "team": "Townsfolk",
+    "first": null,
+    "other": null
+  },
+  {
+    "id": "mayor",
+    "name": "Mayor",
+    "team": "Townsfolk",
+    "first": null,
+    "other": null
+  },
+  {
+    "id": "butler",
+    "name": "Butler",
+    "team": "Outsider",
+    "first": {
+      "order": 39,
+      "action": "Wake the Butler.",
+      "detail": "They choose a player to be their Master."
+    },
+    "other": {
+      "order": 67,
+      "action": "Wake the Butler.",
+      "detail": "Remove the previous Master reminder; they choose a new Master."
+    }
+  },
+  {
+    "id": "drunk",
+    "name": "Drunk",
+    "team": "Outsider",
+    "first": null,
+    "other": null
+  },
+  {
+    "id": "recluse",
+    "name": "Recluse",
+    "team": "Outsider",
+    "first": null,
+    "other": null
+  },
+  {
+    "id": "saint",
+    "name": "Saint",
+    "team": "Outsider",
+    "first": null,
+    "other": null
+  },
+  {
+    "id": "poisoner",
+    "name": "Poisoner",
+    "team": "Minion",
+    "first": {
+      "order": 17,
+      "action": "Wake the Poisoner.",
+      "detail": "They choose a player to poison through the next day."
+    },
+    "other": {
+      "order": 7,
+      "action": "Wake the Poisoner.",
+      "detail": "Remove the previous poison; they choose a player to poison through the next day."
+    }
+  },
+  {
+    "id": "spy",
+    "name": "Spy",
+    "team": "Minion",
+    "first": {
+      "order": 49,
+      "action": "Wake the Spy.",
+      "detail": "Show the Grimoire for as long as needed."
+    },
+    "other": {
+      "order": 68,
+      "action": "Wake the Spy.",
+      "detail": "Show the Grimoire for as long as needed."
+    }
+  },
+  {
+    "id": "scarlet_woman",
+    "name": "Scarlet Woman",
+    "team": "Minion",
+    "first": null,
+    "other": {
+      "order": 19,
+      "action": "Wake the Scarlet Woman if they became the Demon today.",
+      "detail": "Show the You Are card, then the Demon token."
+    }
+  },
+  {
+    "id": "baron",
+    "name": "Baron",
+    "team": "Minion",
+    "first": null,
+    "other": null
+  },
+  {
+    "id": "imp",
+    "name": "Imp",
+    "team": "Demon",
+    "first": null,
+    "other": {
+      "order": 24,
+      "action": "Wake the Imp.",
+      "detail": "They choose a player, who dies. If they choose themself, turn an alive Minion into the Imp and wake that player to show their new character."
+    }
+  }
+]

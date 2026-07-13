@@ -1,0 +1,289 @@
+[
+  {
+    "id": "clockmaker",
+    "name": "Clockmaker",
+    "team": "Townsfolk",
+    "first": {
+      "order": 41,
+      "action": "Wake the Clockmaker.",
+      "detail": "Show the shortest number of steps from the Demon to a Minion."
+    },
+    "other": null
+  },
+  {
+    "id": "dreamer",
+    "name": "Dreamer",
+    "team": "Townsfolk",
+    "first": {
+      "order": 42,
+      "action": "Wake the Dreamer.",
+      "detail": "They choose a player; show one good and one evil character, one of which is correct."
+    },
+    "other": {
+      "order": 56,
+      "action": "Wake the Dreamer.",
+      "detail": "They choose a player; show one good and one evil character, one of which is correct."
+    }
+  },
+  {
+    "id": "snake_charmer",
+    "name": "Snake Charmer",
+    "team": "Townsfolk",
+    "first": {
+      "order": 20,
+      "action": "Wake the Snake Charmer.",
+      "detail": "They choose a player. If it is the Demon, swap their characters and alignments, wake both players with their new information, and poison the new Snake Charmer."
+    },
+    "other": {
+      "order": 11,
+      "action": "Wake the Snake Charmer.",
+      "detail": "They choose a player. If it is the Demon, swap their characters and alignments, wake both players with their new information, and poison the new Snake Charmer."
+    }
+  },
+  {
+    "id": "mathematician",
+    "name": "Mathematician",
+    "team": "Townsfolk",
+    "first": {
+      "order": 52,
+      "action": "Wake the Mathematician.",
+      "detail": "Show how many players' abilities malfunctioned due to another ability since dawn."
+    },
+    "other": {
+      "order": 71,
+      "action": "Wake the Mathematician.",
+      "detail": "Show how many players' abilities malfunctioned due to another ability since dawn."
+    }
+  },
+  {
+    "id": "flowergirl",
+    "name": "Flowergirl",
+    "team": "Townsfolk",
+    "first": null,
+    "other": {
+      "order": 57,
+      "action": "Wake the Flowergirl.",
+      "detail": "Nod or shake your head for whether a Demon voted today."
+    }
+  },
+  {
+    "id": "town_crier",
+    "name": "Town Crier",
+    "team": "Townsfolk",
+    "first": null,
+    "other": {
+      "order": 58,
+      "action": "Wake the Town Crier.",
+      "detail": "Nod or shake your head for whether a Minion nominated today."
+    }
+  },
+  {
+    "id": "oracle",
+    "name": "Oracle",
+    "team": "Townsfolk",
+    "first": null,
+    "other": {
+      "order": 59,
+      "action": "Wake the Oracle.",
+      "detail": "Show the number of dead evil players."
+    }
+  },
+  {
+    "id": "savant",
+    "name": "Savant",
+    "team": "Townsfolk",
+    "first": null,
+    "other": null
+  },
+  {
+    "id": "seamstress",
+    "name": "Seamstress",
+    "team": "Townsfolk",
+    "first": {
+      "order": 43,
+      "action": "Wake the Seamstress if they have not used their ability.",
+      "detail": "They may choose two other players; indicate whether those players have the same alignment."
+    },
+    "other": {
+      "order": 60,
+      "action": "Wake the Seamstress if they have not used their ability.",
+      "detail": "They may choose two other players; indicate whether those players have the same alignment."
+    }
+  },
+  {
+    "id": "philosopher",
+    "name": "Philosopher",
+    "team": "Townsfolk",
+    "first": {
+      "order": 2,
+      "action": "Wake the Philosopher if they have not used their ability.",
+      "detail": "They may choose a good character ability to gain; make that character drunk if it is in play."
+    },
+    "other": {
+      "order": 2,
+      "action": "Wake the Philosopher if they have not used their ability.",
+      "detail": "They may choose a good character ability to gain; make that character drunk if it is in play."
+    }
+  },
+  {
+    "id": "artist",
+    "name": "Artist",
+    "team": "Townsfolk",
+    "first": null,
+    "other": null
+  },
+  {
+    "id": "juggler",
+    "name": "Juggler",
+    "team": "Townsfolk",
+    "first": null,
+    "other": {
+      "order": 61,
+      "action": "Wake the Juggler after their first day.",
+      "detail": "Show the number of correct character guesses they made today."
+    }
+  },
+  {
+    "id": "sage",
+    "name": "Sage",
+    "team": "Townsfolk",
+    "first": null,
+    "other": {
+      "order": 42,
+      "action": "Wake the Sage if a Demon killed them tonight.",
+      "detail": "Point to two players, one of whom is the Demon that killed them."
+    }
+  },
+  {
+    "id": "mutant",
+    "name": "Mutant",
+    "team": "Outsider",
+    "first": null,
+    "other": null
+  },
+  {
+    "id": "sweetheart",
+    "name": "Sweetheart",
+    "team": "Outsider",
+    "first": null,
+    "other": {
+      "order": 41,
+      "action": "Resolve the Sweetheart without waking them.",
+      "detail": "If the Sweetheart died, choose a player to make drunk."
+    }
+  },
+  {
+    "id": "barber",
+    "name": "Barber",
+    "team": "Outsider",
+    "first": null,
+    "other": {
+      "order": 40,
+      "action": "If the Barber died today, wake the Demon.",
+      "detail": "Show the Barber token. The Demon may choose two players whose characters are swapped; wake both players and show their new characters."
+    }
+  },
+  {
+    "id": "klutz",
+    "name": "Klutz",
+    "team": "Outsider",
+    "first": null,
+    "other": null
+  },
+  {
+    "id": "evil_twin",
+    "name": "Evil Twin",
+    "team": "Minion",
+    "first": {
+      "order": 23,
+      "action": "Wake the Evil Twin and their good twin together.",
+      "detail": "Show each twin the other player and the other's character."
+    },
+    "other": null
+  },
+  {
+    "id": "witch",
+    "name": "Witch",
+    "team": "Minion",
+    "first": {
+      "order": 24,
+      "action": "Wake the Witch.",
+      "detail": "They choose a player, who dies if they nominate tomorrow."
+    },
+    "other": {
+      "order": 14,
+      "action": "If at least four players are alive, wake the Witch.",
+      "detail": "They choose a player, who dies if they nominate tomorrow."
+    }
+  },
+  {
+    "id": "cerenovus",
+    "name": "Cerenovus",
+    "team": "Minion",
+    "first": {
+      "order": 25,
+      "action": "Wake the Cerenovus.",
+      "detail": "They choose a player and a good character; wake that player and show the Cerenovus token and chosen character."
+    },
+    "other": {
+      "order": 15,
+      "action": "Wake the Cerenovus.",
+      "detail": "They choose a player and a good character; wake that player and show the Cerenovus token and chosen character."
+    }
+  },
+  {
+    "id": "pit_hag",
+    "name": "Pit-Hag",
+    "team": "Minion",
+    "first": null,
+    "other": {
+      "order": 16,
+      "action": "Wake the Pit-Hag.",
+      "detail": "They choose a player and character. If that character is not in play, change the chosen player's character and wake them to show it."
+    }
+  },
+  {
+    "id": "fang_gu",
+    "name": "Fang Gu",
+    "team": "Demon",
+    "first": null,
+    "other": {
+      "order": 29,
+      "action": "Wake the Fang Gu.",
+      "detail": "They choose a player, who dies. The first chosen Outsider instead becomes an evil Fang Gu; kill the old Fang Gu and wake the new one with their character and alignment."
+    }
+  },
+  {
+    "id": "vigormortis",
+    "name": "Vigormortis",
+    "team": "Demon",
+    "first": null,
+    "other": {
+      "order": 32,
+      "action": "Wake the Vigormortis.",
+      "detail": "They choose a player, who dies. A Minion killed this way keeps their ability and poisons a neighboring Townsfolk."
+    }
+  },
+  {
+    "id": "no_dashii",
+    "name": "No Dashii",
+    "team": "Demon",
+    "first": null,
+    "other": {
+      "order": 30,
+      "action": "Wake the No Dashii.",
+      "detail": "They choose a player, who dies."
+    }
+  },
+  {
+    "id": "vortox",
+    "name": "Vortox",
+    "team": "Demon",
+    "first": null,
+    "other": {
+      "order": 31,
+      "action": "Wake the Vortox.",
+      "detail": "They choose a player, who dies."
+    }
+  }
+]

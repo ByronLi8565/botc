@@ -110,6 +110,28 @@
       scrollbar-width: none;
     }
 
+    .night-options {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .player-count {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      white-space: nowrap;
+    }
+
+    .player-count select {
+      min-height: 44px;
+      border: 1px solid var(--line);
+      border-radius: 0;
+      background: var(--black);
+      color: var(--text);
+      padding: 0.45rem 1.8rem 0.45rem 0.65rem;
+    }
+
     .tabs::-webkit-scrollbar,
     .segments::-webkit-scrollbar,
     .script-row::-webkit-scrollbar {
@@ -454,9 +476,26 @@
               <h2>Night</h2>
               <span class="small" id="nightMeta"></span>
             </div>
-            <div class="segments" aria-label="Night phase">
-              <button class="segment" type="button" data-phase="first" aria-pressed="true">First night</button>
-              <button class="segment" type="button" data-phase="other" aria-pressed="false">Rest of nights</button>
+            <div class="night-options">
+              <div class="segments" aria-label="Night phase">
+                <button class="segment" type="button" data-phase="first" aria-pressed="true">First night</button>
+                <button class="segment" type="button" data-phase="other" aria-pressed="false">Rest of nights</button>
+              </div>
+              <label class="player-count small">Players
+                <select id="playerCount" aria-label="Player count">
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                  <option value="7" selected>7</option>
+                  <option value="8">8</option>
+                  <option value="9">9</option>
+                  <option value="10">10</option>
+                  <option value="11">11</option>
+                  <option value="12">12</option>
+                  <option value="13">13</option>
+                  <option value="14">14</option>
+                  <option value="15">15</option>
+                </select>
+              </label>
             </div>
           </div>
 
@@ -476,8 +515,8 @@
 
           <details class="section">
             <summary><strong>Custom script JSON</strong></summary>
-            <p class="small">Paste a Blood on the Clocktower script JSON array. Roles matching known IDs get night instructions automatically.</p>
-            <textarea id="customJson" spellcheck="false" placeholder='[{"id":"washerwoman"},{"id":"librarian"},{"id":"imp"}]'></textarea>
+            <p class="small">Paste JSON exported by the official Blood on the Clocktower Script Tool. Script metadata, built-in IDs, and homebrew role definitions are supported.</p>
+            <textarea id="customJson" spellcheck="false" placeholder='[{"id":"_meta","name":"My Script","author":"Storyteller"},"washerwoman","librarian","imp"]'></textarea>
             <div class="controls">
               <button class="primary full" type="button" data-action="load-custom">Load custom script</button>
             </div>
@@ -503,102 +542,25 @@
   <script>
     const TEAMS = ["Townsfolk", "Outsider", "Minion", "Demon", "Traveler", "Fabled"];
 
-    const ROLE_DATA = {
-      washerwoman: role("Washerwoman", "Townsfolk", 10, 0, "Wake the Washerwoman.", "Point to one Townsfolk and one wrong player."),
-      librarian: role("Librarian", "Townsfolk", 20, 0, "Wake the Librarian.", "Point to one Outsider and one wrong player, or show zero if no Outsiders are in play."),
-      investigator: role("Investigator", "Townsfolk", 30, 0, "Wake the Investigator.", "Point to one Minion and one wrong player."),
-      chef: role("Chef", "Townsfolk", 40, 0, "Wake the Chef.", "Show the number of evil pairs sitting next to each other."),
-      empath: role("Empath", "Townsfolk", 50, 60, "Wake the Empath.", "Show the number of evil living neighbors."),
-      fortune_teller: role("Fortune Teller", "Townsfolk", 60, 70, "Wake the Fortune Teller.", "They choose two players. Nod if either is a Demon, counting the red herring."),
-      undertaker: role("Undertaker", "Townsfolk", 0, 80, "Wake the Undertaker.", "Show the character token of the player executed today."),
-      monk: role("Monk", "Townsfolk", 0, 20, "Wake the Monk.", "They choose one player other than themself to protect from the Demon."),
-      ravenkeeper: role("Ravenkeeper", "Townsfolk", 0, 50, "Wake the Ravenkeeper if they died tonight.", "They choose a player. Show that player's character token."),
-      virgin: role("Virgin", "Townsfolk", 0, 0, "", "No night action."),
-      slayer: role("Slayer", "Townsfolk", 0, 0, "", "No night action."),
-      soldier: role("Soldier", "Townsfolk", 0, 0, "", "No night action."),
-      mayor: role("Mayor", "Townsfolk", 0, 0, "", "No night action."),
-      butler: role("Butler", "Outsider", 70, 90, "Wake the Butler.", "They choose a master. Track their vote restriction."),
-      drunk: role("Drunk", "Outsider", 0, 0, "", "No night action. Remember which Townsfolk token they saw."),
-      recluse: role("Recluse", "Outsider", 0, 0, "", "No night action."),
-      saint: role("Saint", "Outsider", 0, 0, "", "No night action."),
-      poisoner: role("Poisoner", "Minion", 5, 10, "Wake the Poisoner.", "They choose one player to poison until dusk."),
-      spy: role("Spy", "Minion", 90, 100, "Wake the Spy.", "Show the grimoire."),
-      scarlet_woman: role("Scarlet Woman", "Minion", 0, 30, "Wake the Scarlet Woman if the Demon died with five or more players alive.", "Show that they are now the Demon."),
-      baron: role("Baron", "Minion", 0, 0, "", "No night action after setup."),
-      imp: role("Imp", "Demon", 0, 40, "Wake the Imp.", "They choose a player. That player dies. If the Imp kills themself, choose an alive Minion to become the Imp."),
-
-      grandmother: role("Grandmother", "Townsfolk", 10, 0, "Wake the Grandmother.", "Point to their grandchild and show that player's character token."),
-      sailor: role("Sailor", "Townsfolk", 20, 20, "Wake the Sailor.", "They choose a living player. One of the two is drunk until dusk."),
-      chambermaid: role("Chambermaid", "Townsfolk", 30, 60, "Wake the Chambermaid.", "They choose two alive players. Show how many woke tonight due to their own ability."),
-      exorcist: role("Exorcist", "Townsfolk", 35, 30, "Wake the Exorcist.", "They choose a player. If they chose the Demon, the Demon learns who chose them and does not act."),
-      innkeeper: role("Innkeeper", "Townsfolk", 0, 25, "Wake the Innkeeper.", "They choose two players. Those players are safe from the Demon and one is drunk."),
-      gambler: role("Gambler", "Townsfolk", 0, 65, "Wake the Gambler.", "They choose a player and guess a character. Mark them to die if wrong."),
-      gossip: role("Gossip", "Townsfolk", 0, 0, "", "No night action. Resolve their public statement at night if true."),
-      courtier: role("Courtier", "Townsfolk", 40, 40, "Wake the Courtier if using their ability.", "They choose a character. That character is drunk for three nights and days."),
-      professor: role("Professor", "Townsfolk", 0, 70, "Wake the Professor if using their ability.", "They choose a dead player. If valid, that player lives."),
-      minstrel: role("Minstrel", "Townsfolk", 0, 0, "", "No night action. Drunkenness is automatic after Minion execution."),
-      tea_lady: role("Tea Lady", "Townsfolk", 0, 0, "", "No night action."),
-      pacifist: role("Pacifist", "Townsfolk", 0, 0, "", "No night action."),
-      fool: role("Fool", "Townsfolk", 0, 0, "", "No night action."),
-      goon: role("Goon", "Outsider", 0, 0, "", "No wake-up. Apply drunkenness and alignment change when chosen."),
-      lunatic: role("Lunatic", "Outsider", 55, 45, "Wake the Lunatic.", "Let them choose targets as though they are the Demon. Do not kill from this choice."),
-      tinker: role("Tinker", "Outsider", 0, 0, "", "May die at any time."),
-      moonchild: role("Moonchild", "Outsider", 0, 75, "Wake the Moonchild if they died today.", "They choose a living player. If that player is good, that player dies."),
-      godfather: role("Godfather", "Minion", 8, 85, "Wake the Godfather.", "First night: show which Outsiders are in play. Other nights: if an Outsider died today, choose a player to die."),
-      devil_advocate: role("Devil's Advocate", "Minion", 0, 15, "Wake the Devil's Advocate.", "They choose a living player. That player survives execution tomorrow."),
-      assassin: role("Assassin", "Minion", 0, 55, "Wake the Assassin if using their ability.", "They choose a player. That player dies, even if protected."),
-      mastermind: role("Mastermind", "Minion", 0, 0, "", "No night action."),
-      zombuul: role("Zombuul", "Demon", 0, 35, "Wake the Zombuul if no one died today.", "They choose a player. That player dies."),
-      pukka: role("Pukka", "Demon", 50, 35, "Wake the Pukka.", "They choose a player to poison. The previously poisoned player dies."),
-      shabaloth: role("Shabaloth", "Demon", 0, 35, "Wake the Shabaloth.", "They choose two players. Those players die. You may regurgitate a dead player."),
-      po: role("Po", "Demon", 0, 35, "Wake the Po.", "They either choose no one and charge, or choose three players to die if charged."),
-
-      clockmaker: role("Clockmaker", "Townsfolk", 10, 0, "Wake the Clockmaker.", "Show the shortest distance from Demon to nearest Minion."),
-      dreamer: role("Dreamer", "Townsfolk", 20, 45, "Wake the Dreamer.", "They choose a player. Show one good and one evil character, one of which is true."),
-      snake_charmer: role("Snake Charmer", "Townsfolk", 30, 15, "Wake the Snake Charmer.", "They choose a player. If Demon, swap characters and alignments."),
-      mathematician: role("Mathematician", "Townsfolk", 40, 90, "Wake the Mathematician.", "Show how many players' abilities malfunctioned today due to another ability."),
-      flowergirl: role("Flowergirl", "Townsfolk", 0, 70, "Wake the Flowergirl.", "Show whether a Demon voted today."),
-      town_crier: role("Town Crier", "Townsfolk", 0, 75, "Wake the Town Crier.", "Show whether a Minion nominated today."),
-      oracle: role("Oracle", "Townsfolk", 0, 80, "Wake the Oracle.", "Show how many dead players are evil."),
-      savant: role("Savant", "Townsfolk", 0, 0, "", "No night action."),
-      seamstress: role("Seamstress", "Townsfolk", 45, 55, "Wake the Seamstress if using their ability.", "They choose two players. Show whether they have the same alignment."),
-      philosopher: role("Philosopher", "Townsfolk", 50, 25, "Wake the Philosopher if using their ability.", "They choose a good character ability to gain. Drunk that character if needed."),
-      artist: role("Artist", "Townsfolk", 0, 0, "", "No night action."),
-      juggler: role("Juggler", "Townsfolk", 0, 0, "", "No night action. Answer after dusk if they juggled today."),
-      sage: role("Sage", "Townsfolk", 0, 50, "Wake the Sage if killed by the Demon.", "Point to two players, one of whom is the Demon that killed them."),
-      mutant: role("Mutant", "Outsider", 0, 0, "", "No night action."),
-      sweetheart: role("Sweetheart", "Outsider", 0, 0, "", "No night action. When they die, make one player drunk."),
-      barber: role("Barber", "Outsider", 0, 35, "If the Barber died today, wake the Demon.", "The Demon may swap two players' characters."),
-      klutz: role("Klutz", "Outsider", 0, 0, "", "No night action."),
-      evil_twin: role("Evil Twin", "Minion", 6, 0, "Wake the Evil Twin and Good Twin.", "Show each twin the other player and the other's character."),
-      witch: role("Witch", "Minion", 0, 10, "Wake the Witch.", "They choose a player. That player dies if they nominate tomorrow."),
-      cerenovus: role("Cerenovus", "Minion", 0, 20, "Wake the Cerenovus.", "They choose a player and a good character for madness."),
-      pit_hag: role("Pit-Hag", "Minion", 0, 30, "Wake the Pit-Hag.", "They choose a player and a character. Change that player into that character."),
-      fang_gu: role("Fang Gu", "Demon", 0, 40, "Wake the Fang Gu.", "They choose a player. That player dies. If an Outsider was chosen for the first time, they become the Fang Gu and the old Fang Gu dies."),
-      vigormortis: role("Vigormortis", "Demon", 0, 40, "Wake the Vigormortis.", "They choose a player. That player dies. Minions killed this way keep their ability and poison a Townsfolk neighbor."),
-      no_dashii: role("No Dashii", "Demon", 0, 40, "Wake the No Dashii.", "They choose a player. That player dies."),
-      vortox: role("Vortox", "Demon", 0, 40, "Wake the Vortox.", "They choose a player. That player dies. Townsfolk information must be false.")
-    };
-
-    const SCRIPTS = [
-      script("tb", "Trouble Brewing", ["washerwoman", "librarian", "investigator", "chef", "empath", "fortune_teller", "undertaker", "monk", "ravenkeeper", "virgin", "slayer", "soldier", "mayor", "butler", "drunk", "recluse", "saint", "poisoner", "spy", "scarlet_woman", "baron", "imp"]),
-      script("bmr", "Bad Moon Rising", ["grandmother", "sailor", "chambermaid", "exorcist", "innkeeper", "gambler", "gossip", "courtier", "professor", "minstrel", "tea_lady", "pacifist", "fool", "goon", "lunatic", "tinker", "moonchild", "godfather", "devil_advocate", "assassin", "mastermind", "zombuul", "pukka", "shabaloth", "po"]),
-      script("sv", "Sects & Violets", ["clockmaker", "dreamer", "snake_charmer", "mathematician", "flowergirl", "town_crier", "oracle", "savant", "seamstress", "philosopher", "artist", "juggler", "sage", "mutant", "sweetheart", "barber", "klutz", "evil_twin", "witch", "cerenovus", "pit_hag", "fang_gu", "vigormortis", "no_dashii", "vortox"])
-    ];
-
+    let ROLE_DATA = {};
+    let SCRIPTS = [];
+    let ROLE_ALIASES = {};
     const state = {
-      scriptId: "tb",
+      scriptId: "",
       phase: "first",
-      selected: new Set(SCRIPTS[0].roles),
+      playerCount: 7,
+      selected: new Set(),
       slides: [],
       slideIndex: 0
     };
+    let slideSequence = 0;
 
     const els = {
       status: document.querySelector("#status"),
       scriptRow: document.querySelector("#scriptRow"),
       scriptMeta: document.querySelector("#scriptMeta"),
       nightMeta: document.querySelector("#nightMeta"),
+      playerCount: document.querySelector("#playerCount"),
       roleCount: document.querySelector("#roleCount"),
       roleGroups: document.querySelector("#roleGroups"),
       setupView: document.querySelector("#setupView"),
@@ -609,11 +571,10 @@
       customJson: document.querySelector("#customJson")
     };
 
-    hydrateFromUrl();
-    renderAll();
-    generateDeck(false);
+    initialize();
 
     document.addEventListener("click", (event) => {
+      if (!SCRIPTS.length) return;
       const button = event.target.closest("button");
       if (!button) return;
 
@@ -629,6 +590,14 @@
     });
 
     document.addEventListener("change", (event) => {
+      if (!SCRIPTS.length) return;
+      if (event.target === els.playerCount) {
+        state.playerCount = Number(els.playerCount.value);
+        renderPhase();
+        persist();
+        generateDeck(true);
+        return;
+      }
       const input = event.target.closest("input[data-role]");
       if (!input) return;
       if (input.checked) state.selected.add(input.dataset.role);
@@ -660,12 +629,141 @@
       }
     }, { passive: true });
 
-    function role(name, team, first, other, wake, detail) {
-      return { name, team, first, other, wake, detail };
+    async function initialize() {
+      els.status.textContent = "Loading data";
+      try {
+        const config = await loadJson("/data/scripts.json");
+        validateConfig(config);
+        ROLE_ALIASES = config.aliases || {};
+
+        const roleLists = await Promise.all(config.scripts.map((item) => loadJson(item.rolesFile)));
+        const roleEntries = roleLists.flat();
+        const roleIds = new Set();
+        ROLE_DATA = Object.fromEntries(roleEntries.map((item) => {
+          validateRole(item);
+          if (roleIds.has(item.id)) throw new Error(`Duplicate role id: ${item.id}`);
+          roleIds.add(item.id);
+          const { id, ...roleItem } = item;
+          return [id, roleItem];
+        }));
+
+        const scriptDocuments = await Promise.all(config.scripts.map((item) => loadJson(item.scriptFile)));
+        SCRIPTS = scriptDocuments.map((document, index) => {
+          const parsed = parseScriptToolScript(document, config.scripts[index]);
+          return parsed.script;
+        });
+        validateReferences();
+
+        hydrateFromUrl();
+        renderAll();
+        generateDeck(false);
+      } catch (error) {
+        console.error(error);
+        els.status.textContent = "Role data failed to load";
+        els.roleGroups.innerHTML = `<p class="small">${escapeHtml(error.message)}</p>`;
+      }
     }
 
-    function script(id, name, roles) {
-      return { id, name, roles };
+    async function loadJson(url) {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`Could not load ${url} (${response.status})`);
+      return response.json();
+    }
+
+    function validateConfig(config) {
+      if (!config || !Array.isArray(config.scripts) || !config.scripts.length) {
+        throw new Error("scripts.json must define at least one script");
+      }
+      config.scripts.forEach((item) => {
+        if (!item.id || !item.scriptFile || !item.rolesFile) {
+          throw new Error("Each script needs an id, scriptFile, and rolesFile");
+        }
+      });
+    }
+
+    function parseScriptToolScript(document, source = {}) {
+      if (!Array.isArray(document)) throw new Error("Script Tool JSON must be an array");
+      const metadata = document.find((entry) => entry && typeof entry === "object" && entry.id === "_meta") || {};
+      const roles = [];
+      const customRoles = [];
+
+      document.forEach((entry) => {
+        if (entry && typeof entry === "object" && entry.id === "_meta") return;
+        const rawId = typeof entry === "string" ? entry : entry && entry.id;
+        if (!rawId) return;
+        const id = normalizeId(rawId);
+        if (!id || roles.includes(id)) return;
+        roles.push(id);
+
+        if (entry && typeof entry === "object" && entry.name && entry.team && entry.ability) {
+          customRoles.push(importedRole(id, entry));
+        }
+      });
+
+      return {
+        script: {
+          id: source.id || `custom-${Date.now()}`,
+          name: metadata.name || source.name || "Custom Script",
+          author: metadata.author || "",
+          roles,
+          firstNightOrder: normalizeNightOrder(metadata.firstNight),
+          otherNightOrder: normalizeNightOrder(metadata.otherNight)
+        },
+        customRoles
+      };
+    }
+
+    function importedRole(id, entry) {
+      const teams = {
+        townsfolk: "Townsfolk",
+        outsider: "Outsider",
+        minion: "Minion",
+        demon: "Demon",
+        traveler: "Traveler",
+        traveller: "Traveler",
+        fabled: "Fabled"
+      };
+      const team = teams[String(entry.team).toLowerCase()];
+      if (!team) throw new Error(`Invalid team for custom role ${id}`);
+      return {
+        id,
+        name: entry.name,
+        team,
+        first: importedInstruction(entry.name, entry.firstNight, entry.firstNightReminder, entry.ability),
+        other: importedInstruction(entry.name, entry.otherNight, entry.otherNightReminder, entry.ability)
+      };
+    }
+
+    function importedInstruction(name, order, reminder, ability) {
+      const numericOrder = Number(order);
+      if (!Number.isFinite(numericOrder) || numericOrder <= 0) return null;
+      return {
+        order: numericOrder,
+        action: `Run the ${name}.`,
+        detail: reminder || ability
+      };
+    }
+
+    function normalizeNightOrder(order) {
+      return Array.isArray(order) ? order.map(normalizeId) : null;
+    }
+
+    function validateRole(item) {
+      if (!item || !item.id || !item.name || !TEAMS.includes(item.team)) {
+        throw new Error(`Invalid role entry: ${item && item.id || "unknown"}`);
+      }
+      ["first", "other"].forEach((phase) => {
+        const instruction = item[phase];
+        if (instruction === null) return;
+        if (!instruction || !Number.isFinite(instruction.order) || instruction.order <= 0 || !instruction.action || !instruction.detail) {
+          throw new Error(`Invalid ${phase}-night instruction for ${item.id}`);
+        }
+      });
+    }
+
+    function validateReferences() {
+      const missing = SCRIPTS.flatMap((item) => item.roles.filter((id) => !ROLE_DATA[id]));
+      if (missing.length) throw new Error(`Missing role data: ${[...new Set(missing)].join(", ")}`);
     }
 
     function currentScript() {
@@ -692,7 +790,8 @@
       document.querySelectorAll("[data-phase]").forEach((button) => {
         button.setAttribute("aria-pressed", String(button.dataset.phase === state.phase));
       });
-      els.nightMeta.textContent = "";
+      els.playerCount.value = String(state.playerCount);
+      els.nightMeta.textContent = `${state.playerCount} players`;
     }
 
     function renderRoles() {
@@ -781,41 +880,48 @@
     }
 
     function generateDeck(resetIndex) {
+      slideSequence = 0;
       const scriptItem = currentScript();
       const selected = scriptItem.roles.filter((id) => state.selected.has(id));
-      const roles = selected.map((id) => ({ id, ...ROLE_DATA[id] || unknownRole(id) }));
-      const phaseKey = state.phase === "first" ? "first" : "other";
+      const roles = selected.map((id) => ({ id, ...(ROLE_DATA[id] || unknownRole(id)) }));
       const slides = [];
       const minions = roles.filter((item) => item.team === "Minion");
       const demons = roles.filter((item) => item.team === "Demon");
 
-      if (state.phase === "first") {
+      if (state.phase === "first" && state.playerCount > 6) {
         if (minions.length) {
-          slides.push(instructionSlide("Minions", "Wake up the Minions", "Have all Minions open their eyes."));
-          slides.push(specialSlide("Minions", "You are Minions", "Show them each other."));
+          const minionInfoOrder = nightOrderFor(scriptItem, "first", "minioninfo", 5);
+          slides.push(orderedSlide(minionInfoOrder, instructionSlide("Minions", "Wake up the Minions", "Have all Minions open their eyes.")));
+          slides.push(orderedSlide(minionInfoOrder, specialSlide("Minions", "You are Minions", "If there is more than one Minion, show them each other.")));
           if (demons.length) {
-            slides.push(specialSlide("Demon", "THIS IS YOUR DEMON", "Point to the Demon."));
+            slides.push(orderedSlide(minionInfoOrder, specialSlide("Demon", "THIS IS YOUR DEMON", "Point to the Demon.")));
           }
         }
         if (demons.length) {
-          slides.push(instructionSlide("Demon", "Wake up the Demon", "Have the Demon open their eyes."));
-          slides.push(specialSlide("Minions", "These are your Minions", minions.length ? "Point to the Minions." : "Show that there are no Minions."));
+          const demonInfoOrder = nightOrderFor(scriptItem, "first", "demoninfo", 8);
+          slides.push(orderedSlide(demonInfoOrder, instructionSlide("Demon", "Wake up the Demon", "Have the Demon open their eyes.")));
+          slides.push(orderedSlide(demonInfoOrder, specialSlide("Minions", "These are your Minions", minions.length ? "Point to the Minions, then show three good character tokens that are not in play." : "Show that there are no Minions, then show three good character tokens that are not in play.")));
         }
       }
 
       roles
-        .filter((item) => Number(item[phaseKey]) > 0 && item.wake)
-        .sort((a, b) => a[phaseKey] - b[phaseKey] || a.name.localeCompare(b.name))
+        .filter((item) => item[state.phase])
         .forEach((item) => {
+          const instruction = item[state.phase];
+          const order = nightOrderFor(scriptItem, state.phase, item.id, instruction.order);
           slides.push({
             kind: "role",
             title: item.name,
             label: `${state.phase === "first" ? "First night" : "Rest of nights"} - ${scriptItem.name}`,
-            action: item.wake,
-            detail: item.detail,
-            footer: `${item.team} - order ${item[phaseKey]}`
+            action: instruction.action,
+            detail: instruction.detail,
+            order,
+            sequence: slideSequence++,
+            footer: `${item.team} - order ${order}`
           });
         });
+
+      slides.sort((a, b) => a.order - b.order || a.sequence - b.sequence || a.title.localeCompare(b.title));
 
       if (!slides.length) {
         slides.push(specialSlide("No Wakes", "No active night actions", "Change the phase or select roles with night actions."));
@@ -850,6 +956,16 @@
       };
     }
 
+    function orderedSlide(order, slide) {
+      return { ...slide, order, sequence: slideSequence++ };
+    }
+
+    function nightOrderFor(scriptItem, phase, id, fallback) {
+      const order = scriptItem[phase === "first" ? "firstNightOrder" : "otherNightOrder"];
+      const index = order ? order.indexOf(id) : -1;
+      return index >= 0 ? index + 1 : fallback;
+    }
+
     function renderDeck() {
       els.deck.innerHTML = state.slides.map((slide, index) => `
         <article class="slide ${slide.kind === "special" ? "special" : ""} ${index === state.slideIndex ? "active" : ""}">
@@ -876,31 +992,36 @@
     }
 
     function loadCustomScript() {
-      let parsed;
+      let document;
       try {
-        parsed = JSON.parse(els.customJson.value);
+        document = JSON.parse(els.customJson.value);
       } catch (error) {
         alert("The custom script JSON could not be parsed.");
         return;
       }
-      if (!Array.isArray(parsed)) {
-        alert("Script JSON must be an array.");
+      let parsed;
+      try {
+        parsed = parseScriptToolScript(document);
+      } catch (error) {
+        alert(error.message);
         return;
       }
-      const ids = parsed
-        .map((entry) => typeof entry === "string" ? entry : entry && entry.id)
-        .filter(Boolean)
-        .map(normalizeId);
-      if (!ids.length) {
+      if (!parsed.script.roles.length) {
         alert("No role IDs were found.");
         return;
       }
-      SCRIPTS.push(script(`custom-${Date.now()}`, "Custom Script", ids));
-      ids.forEach((id) => {
+      parsed.customRoles.forEach((item) => {
+        if (!ROLE_DATA[item.id]) {
+          const { id, ...roleItem } = item;
+          ROLE_DATA[id] = roleItem;
+        }
+      });
+      parsed.script.roles.forEach((id) => {
         if (!ROLE_DATA[id]) ROLE_DATA[id] = unknownRole(id);
       });
+      SCRIPTS.push(parsed.script);
       state.scriptId = SCRIPTS[SCRIPTS.length - 1].id;
-      state.selected = new Set(ids);
+      state.selected = new Set(parsed.script.roles);
       state.slideIndex = 0;
       renderAll();
       persist();
@@ -911,6 +1032,7 @@
       const params = new URLSearchParams();
       params.set("script", state.scriptId);
       params.set("phase", state.phase);
+      params.set("players", String(state.playerCount));
       params.set("roles", [...state.selected].join(","));
       const url = `${location.origin}${location.pathname}?${params.toString()}`;
       try {
@@ -971,6 +1093,7 @@ render();
       const value = {
         scriptId: state.scriptId,
         phase: state.phase,
+        playerCount: state.playerCount,
         selected: [...state.selected]
       };
       localStorage.setItem("clocktower-night-assist", JSON.stringify(value));
@@ -987,25 +1110,29 @@ render();
       const params = new URLSearchParams(location.search);
       const scriptId = params.get("script") || (saved && saved.scriptId);
       const phase = params.get("phase") || (saved && saved.phase);
+      const playerCount = Number(params.get("players") || (saved && saved.playerCount) || 7);
       const roles = params.get("roles") ? params.get("roles").split(",") : saved && saved.selected;
 
+      if (!SCRIPTS.some((item) => item.id === state.scriptId)) state.scriptId = SCRIPTS[0].id;
       if (scriptId && SCRIPTS.some((item) => item.id === scriptId)) state.scriptId = scriptId;
       if (phase === "first" || phase === "other") state.phase = phase;
-      if (Array.isArray(roles)) state.selected = new Set(roles.map(normalizeId));
+      if (playerCount >= 5 && playerCount <= 15) state.playerCount = playerCount;
+      state.selected = Array.isArray(roles)
+        ? new Set(roles.map(normalizeId))
+        : new Set(currentScript().roles);
     }
 
     function normalizeId(value) {
-      return String(value).trim().toLowerCase().replace(/[\s-]+/g, "_").replace(/[^a-z0-9_]/g, "");
+      const id = String(value).trim().toLowerCase().replace(/[\s-]+/g, "_").replace(/[^a-z0-9_]/g, "");
+      return ROLE_ALIASES[id] || id;
     }
 
     function unknownRole(id) {
       return {
         name: titleize(id),
         team: "Townsfolk",
-        first: 0,
-        other: 0,
-        wake: "",
-        detail: "No built-in night instruction for this custom role."
+        first: null,
+        other: null
       };
     }
 

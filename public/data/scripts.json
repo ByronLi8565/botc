@@ -1,0 +1,31 @@
+{
+  "scripts": [
+    {
+      "id": "tb",
+      "scriptFile": "/data/scripts/tb.json",
+      "rolesFile": "/data/roles/tb.json"
+    },
+    {
+      "id": "bmr",
+      "scriptFile": "/data/scripts/bmr.json",
+      "rolesFile": "/data/roles/bmr.json"
+    },
+    {
+      "id": "sv",
+      "scriptFile": "/data/scripts/sv.json",
+      "rolesFile": "/data/roles/sv.json"
+    }
+  ],
+  "aliases": {
+    "scarletwoman": "scarlet_woman",
+    "fortuneteller": "fortune_teller",
+    "devilsadvocate": "devil_advocate",
+    "tealady": "tea_lady",
+    "snakecharmer": "snake_charmer",
+    "towncrier": "town_crier",
+    "eviltwin": "evil_twin",
+    "pithag": "pit_hag",
+    "fanggu": "fang_gu",
+    "nodashii": "no_dashii"
+  }
+}

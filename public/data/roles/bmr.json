@@ -1,0 +1,285 @@
+[
+  {
+    "id": "grandmother",
+    "name": "Grandmother",
+    "team": "Townsfolk",
+    "first": {
+      "order": 40,
+      "action": "Wake the Grandmother.",
+      "detail": "Show their grandchild's character token, then point to the grandchild."
+    },
+    "other": {
+      "order": 51,
+      "action": "Resolve the Grandmother without waking them.",
+      "detail": "If their grandchild was killed by the Demon tonight, the Grandmother dies."
+    }
+  },
+  {
+    "id": "sailor",
+    "name": "Sailor",
+    "team": "Townsfolk",
+    "first": {
+      "order": 11,
+      "action": "Wake the Sailor.",
+      "detail": "They choose a living player; make either the Sailor or that player drunk."
+    },
+    "other": {
+      "order": 4,
+      "action": "Wake the Sailor.",
+      "detail": "Remove the previous drunkenness. They choose a living player; make either the Sailor or that player drunk."
+    }
+  },
+  {
+    "id": "chambermaid",
+    "name": "Chambermaid",
+    "team": "Townsfolk",
+    "first": {
+      "order": 51,
+      "action": "Wake the Chambermaid.",
+      "detail": "They choose two alive players; show how many woke tonight due to their own ability."
+    },
+    "other": {
+      "order": 70,
+      "action": "Wake the Chambermaid.",
+      "detail": "They choose two alive players; show how many woke tonight due to their own ability."
+    }
+  },
+  {
+    "id": "exorcist",
+    "name": "Exorcist",
+    "team": "Townsfolk",
+    "first": null,
+    "other": {
+      "order": 21,
+      "action": "Wake the Exorcist.",
+      "detail": "They choose a different player from last night. If it is the Demon, wake the Demon, show the Exorcist token and point to the Exorcist; the Demon does not act."
+    }
+  },
+  {
+    "id": "innkeeper",
+    "name": "Innkeeper",
+    "team": "Townsfolk",
+    "first": null,
+    "other": {
+      "order": 9,
+      "action": "Wake the Innkeeper.",
+      "detail": "Remove last night's reminders. They choose two players to protect; make one of them drunk."
+    }
+  },
+  {
+    "id": "gambler",
+    "name": "Gambler",
+    "team": "Townsfolk",
+    "first": null,
+    "other": {
+      "order": 10,
+      "action": "Wake the Gambler.",
+      "detail": "They choose a player and guess that player's character. If wrong, the Gambler dies."
+    }
+  },
+  {
+    "id": "gossip",
+    "name": "Gossip",
+    "team": "Townsfolk",
+    "first": null,
+    "other": {
+      "order": 38,
+      "action": "Resolve the Gossip without waking them.",
+      "detail": "If their public statement was true, choose an unprotected player to die."
+    }
+  },
+  {
+    "id": "courtier",
+    "name": "Courtier",
+    "team": "Townsfolk",
+    "first": {
+      "order": 19,
+      "action": "Wake the Courtier if they have not used their ability.",
+      "detail": "They may choose a character to make drunk for three days and nights."
+    },
+    "other": {
+      "order": 8,
+      "action": "Resolve the Courtier timer, then wake them if unused.",
+      "detail": "Reduce the drunk timer. If unused, they may choose a character to make drunk for three days and nights."
+    }
+  },
+  {
+    "id": "professor",
+    "name": "Professor",
+    "team": "Townsfolk",
+    "first": null,
+    "other": {
+      "order": 43,
+      "action": "Wake the Professor if they have not used their ability.",
+      "detail": "They may choose a dead player; if that player is a Townsfolk, they become alive."
+    }
+  },
+  {
+    "id": "minstrel",
+    "name": "Minstrel",
+    "team": "Townsfolk",
+    "first": null,
+    "other": null
+  },
+  {
+    "id": "tea_lady",
+    "name": "Tea Lady",
+    "team": "Townsfolk",
+    "first": null,
+    "other": null
+  },
+  {
+    "id": "pacifist",
+    "name": "Pacifist",
+    "team": "Townsfolk",
+    "first": null,
+    "other": null
+  },
+  {
+    "id": "fool",
+    "name": "Fool",
+    "team": "Townsfolk",
+    "first": null,
+    "other": null
+  },
+  {
+    "id": "goon",
+    "name": "Goon",
+    "team": "Outsider",
+    "first": null,
+    "other": null
+  },
+  {
+    "id": "lunatic",
+    "name": "Lunatic",
+    "team": "Outsider",
+    "first": {
+      "order": 8,
+      "action": "Wake the Lunatic.",
+      "detail": "If there are 7 or more players, show arbitrary Minions and three good bluffs. Let them act as their Demon; then wake the real Demon and show the Lunatic and any chosen targets."
+    },
+    "other": {
+      "order": 20,
+      "action": "Wake the Lunatic.",
+      "detail": "Let them act as their Demon. Then wake the real Demon and show any chosen targets."
+    }
+  },
+  {
+    "id": "tinker",
+    "name": "Tinker",
+    "team": "Outsider",
+    "first": null,
+    "other": {
+      "order": 49,
+      "action": "Resolve the Tinker without waking them.",
+      "detail": "The Tinker might die."
+    }
+  },
+  {
+    "id": "moonchild",
+    "name": "Moonchild",
+    "team": "Outsider",
+    "first": null,
+    "other": {
+      "order": 50,
+      "action": "Resolve the Moonchild without waking them.",
+      "detail": "If they chose a player when they died today and that player is good, that player dies."
+    }
+  },
+  {
+    "id": "godfather",
+    "name": "Godfather",
+    "team": "Minion",
+    "first": {
+      "order": 21,
+      "action": "Wake the Godfather.",
+      "detail": "Show every Outsider character in play."
+    },
+    "other": {
+      "order": 37,
+      "action": "Wake the Godfather if an Outsider died today.",
+      "detail": "They choose a player, who dies."
+    }
+  },
+  {
+    "id": "devil_advocate",
+    "name": "Devil's Advocate",
+    "team": "Minion",
+    "first": {
+      "order": 22,
+      "action": "Wake the Devil's Advocate.",
+      "detail": "They choose a living player to survive execution tomorrow."
+    },
+    "other": {
+      "order": 13,
+      "action": "Wake the Devil's Advocate.",
+      "detail": "They choose a living player other than last night's choice to survive execution tomorrow."
+    }
+  },
+  {
+    "id": "assassin",
+    "name": "Assassin",
+    "team": "Minion",
+    "first": null,
+    "other": {
+      "order": 36,
+      "action": "Wake the Assassin if they have not used their ability.",
+      "detail": "They may choose a player, who dies even if protected."
+    }
+  },
+  {
+    "id": "mastermind",
+    "name": "Mastermind",
+    "team": "Minion",
+    "first": null,
+    "other": null
+  },
+  {
+    "id": "zombuul",
+    "name": "Zombuul",
+    "team": "Demon",
+    "first": null,
+    "other": {
+      "order": 25,
+      "action": "Wake the Zombuul if no one died during the day.",
+      "detail": "They choose a player, who dies."
+    }
+  },
+  {
+    "id": "pukka",
+    "name": "Pukka",
+    "team": "Demon",
+    "first": {
+      "order": 28,
+      "action": "Wake the Pukka.",
+      "detail": "They choose a player to poison."
+    },
+    "other": {
+      "order": 26,
+      "action": "Wake the Pukka.",
+      "detail": "They choose a player to poison; the previously poisoned player dies."
+    }
+  },
+  {
+    "id": "shabaloth",
+    "name": "Shabaloth",
+    "team": "Demon",
+    "first": null,
+    "other": {
+      "order": 27,
+      "action": "Wake the Shabaloth.",
+      "detail": "You may resurrect one player chosen last night. They choose two players, who die."
+    }
+  },
+  {
+    "id": "po",
+    "name": "Po",
+    "team": "Demon",
+    "first": null,
+    "other": {
+      "order": 28,
+      "action": "Wake the Po.",
+      "detail": "If charged, they choose three players. Otherwise, they choose one player or no one to charge."
+    }
+  }
+]
