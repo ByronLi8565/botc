@@ -1,3 +1,4 @@
 
 botc on workers
-deployed at [clocktower.byron.land]
+
+deployed at [clocktower.byron.land](url)
