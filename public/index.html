@@ -1,0 +1,1031 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b0b0b" />
+  <title>Clocktower Night Assist</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b0b0b;
+      --panel: #0b0b0b;
+      --text: #e6e6e6;
+      --muted: #8e8e8e;
+      --line: #6b6b6b;
+      --red: #c94a4a;
+      --white: #e6e6e6;
+      --black: #0b0b0b;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      min-height: 100%;
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    body {
+      font-size: 16px;
+      line-height: 1.35;
+    }
+
+    button,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    button {
+      border: 1px solid var(--line);
+      border-radius: 0;
+      background: var(--black);
+      color: var(--text);
+      min-height: 44px;
+      padding: 0.66rem 0.82rem;
+      font-weight: 700;
+      touch-action: manipulation;
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
+    .app {
+      min-height: 100svh;
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: grid;
+      gap: 0.8rem;
+      padding: max(1rem, env(safe-area-inset-top)) 1rem 0.85rem;
+      border-bottom: 1px solid var(--line);
+      background: var(--black);
+    }
+
+    .topline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      font-size: 1.12rem;
+      letter-spacing: 0;
+      font-weight: 800;
+    }
+
+    .status {
+      color: var(--muted);
+      font-size: 0.88rem;
+      white-space: nowrap;
+    }
+
+    .tabs,
+    .segments,
+    .script-row {
+      display: flex;
+      gap: 0.5rem;
+      overflow-x: auto;
+      padding-bottom: 0.1rem;
+      scrollbar-width: none;
+    }
+
+    .tabs::-webkit-scrollbar,
+    .segments::-webkit-scrollbar,
+    .script-row::-webkit-scrollbar {
+      display: none;
+    }
+
+    .tab,
+    .segment,
+    .script-chip {
+      flex: 0 0 auto;
+      color: var(--text);
+      background: var(--black);
+    }
+
+    .tab[aria-selected="true"],
+    .segment[aria-pressed="true"],
+    .script-chip[aria-pressed="true"] {
+      color: var(--red);
+      background: var(--black);
+    }
+
+    main {
+      min-width: 0;
+    }
+
+    .view {
+      display: none;
+      padding: 1rem;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    .setup {
+      max-width: 1040px;
+      margin: 0 auto;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .section {
+      display: grid;
+      gap: 0.72rem;
+      padding: 0.95rem 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section:last-child {
+      border-bottom: 0;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .section h2 {
+      font-size: 1rem;
+      font-weight: 800;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .role-groups {
+      display: grid;
+      gap: 0.9rem;
+    }
+
+    .role-group {
+      display: grid;
+      gap: 0.52rem;
+    }
+
+    .role-group h3 {
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .roles {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.5rem;
+    }
+
+    .role {
+      min-width: 0;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.62rem;
+      align-items: center;
+      min-height: 3.25rem;
+      padding: 0.62rem;
+      border: 1px solid var(--line);
+      border-radius: 0;
+      background: var(--panel);
+    }
+
+    .role:has(input:checked) {
+      background: var(--black);
+      color: var(--red);
+    }
+
+    .role input {
+      width: 1.15rem;
+      height: 1.15rem;
+      margin: 0;
+      accent-color: var(--red);
+    }
+
+    .role strong {
+      display: block;
+      overflow-wrap: anywhere;
+      font-size: 0.95rem;
+      line-height: 1.05;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+    }
+
+    .primary {
+      background: var(--black);
+      color: var(--red);
+    }
+
+    .danger {
+      background: var(--black);
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 11rem;
+      resize: vertical;
+      border: 1px solid var(--line);
+      border-radius: 0;
+      background: var(--black);
+      color: var(--text);
+      padding: 0.8rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      font-size: 0.82rem;
+      line-height: 1.4;
+    }
+
+    .deck-view {
+      min-height: calc(100svh - 8.7rem);
+      display: none;
+      grid-template-rows: 1fr auto;
+      padding: 0;
+    }
+
+    .deck-view.active {
+      display: grid;
+    }
+
+    .deck {
+      position: relative;
+      min-height: 0;
+      overflow: hidden;
+      background: var(--black);
+      touch-action: pan-y;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      grid-template-rows: 1fr;
+      gap: 1rem;
+      padding: 1rem 1rem max(1rem, env(safe-area-inset-bottom));
+      opacity: 0;
+      transform: translateX(12px);
+      pointer-events: none;
+      transition: opacity 160ms ease, transform 160ms ease;
+      background: var(--black);
+      color: var(--white);
+    }
+
+    .slide.active {
+      opacity: 1;
+      transform: translateX(0);
+      pointer-events: auto;
+    }
+
+    .slide.special {
+      background: var(--black);
+      color: var(--text);
+    }
+
+    .slide.special .action {
+      color: var(--red);
+    }
+
+    .slide-main {
+      min-width: 0;
+      align-self: center;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .slide h2 {
+      display: none;
+    }
+
+    .slide .action {
+      max-width: 18ch;
+      font-size: clamp(2rem, 12vw, 6rem);
+      line-height: 1.05;
+      font-weight: 800;
+    }
+
+    .slide .detail {
+      max-width: 58ch;
+      color: currentColor;
+      opacity: 0.78;
+      font-size: clamp(1rem, 4.1vw, 1.6rem);
+      line-height: 1.2;
+    }
+
+    .deck-controls {
+      display: grid;
+      grid-template-columns: 3.3rem 4.7rem 1fr 3.3rem;
+      gap: 0.7rem;
+      align-items: center;
+      padding: 0.72rem 1rem max(0.72rem, env(safe-area-inset-bottom));
+      border-top: 1px solid var(--line);
+      background: var(--black);
+    }
+
+    .deck-controls button {
+      min-width: 0;
+      padding-inline: 0;
+      font-size: 1.3rem;
+      font-weight: 800;
+    }
+
+    .progress {
+      display: grid;
+      gap: 0.34rem;
+      min-width: 0;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .bar {
+      height: 0.42rem;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 0;
+      background: var(--black);
+    }
+
+    .bar span {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: var(--muted);
+    }
+
+    .empty {
+      padding: 3rem 1rem;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    @media (min-width: 720px) {
+      header {
+        grid-template-columns: 1fr auto;
+        align-items: center;
+      }
+
+      .tabs {
+        justify-content: flex-end;
+      }
+
+      .roles {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .controls {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .deck-view {
+        min-height: calc(100svh - 5.25rem);
+      }
+
+      .slide {
+        padding: 2rem 2.4rem;
+      }
+    }
+
+    @media (min-width: 1080px) {
+      .roles {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="topline">
+        <h1>Clocktower Night Assist</h1>
+        <div class="status" id="status">No deck</div>
+      </div>
+      <nav class="tabs" aria-label="Views">
+        <button class="tab" type="button" data-view="setup" aria-selected="true">Setup</button>
+        <button class="tab" type="button" data-view="deck" aria-selected="false">Deck</button>
+        <button class="tab" type="button" data-action="export">Export HTML</button>
+      </nav>
+    </header>
+
+    <main>
+      <section class="view active" id="setupView">
+        <div class="setup">
+          <div class="section">
+            <div class="section-head">
+              <h2>Script</h2>
+              <span class="small" id="scriptMeta"></span>
+            </div>
+            <div class="script-row" id="scriptRow"></div>
+          </div>
+
+          <div class="section">
+            <div class="section-head">
+              <h2>Night</h2>
+              <span class="small" id="nightMeta"></span>
+            </div>
+            <div class="segments" aria-label="Night phase">
+              <button class="segment" type="button" data-phase="first" aria-pressed="true">First night</button>
+              <button class="segment" type="button" data-phase="other" aria-pressed="false">Rest of nights</button>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-head">
+              <h2>Active roles</h2>
+              <span class="small" id="roleCount"></span>
+            </div>
+            <div class="controls">
+              <button type="button" data-action="select-defaults">Select script</button>
+              <button type="button" data-action="clear">Clear</button>
+              <button class="primary" type="button" data-action="generate">Generate deck</button>
+              <button type="button" data-action="copy-link">Copy state link</button>
+            </div>
+            <div class="role-groups" id="roleGroups"></div>
+          </div>
+
+          <details class="section">
+            <summary><strong>Custom script JSON</strong></summary>
+            <p class="small">Paste a Blood on the Clocktower script JSON array. Roles matching known IDs get night instructions automatically.</p>
+            <textarea id="customJson" spellcheck="false" placeholder='[{"id":"washerwoman"},{"id":"librarian"},{"id":"imp"}]'></textarea>
+            <div class="controls">
+              <button class="primary full" type="button" data-action="load-custom">Load custom script</button>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <section class="deck-view" id="deckView" aria-live="polite">
+        <div class="deck" id="deck"></div>
+        <div class="deck-controls">
+          <button type="button" data-action="previous" aria-label="Previous slide">&#8249;</button>
+          <button type="button" data-action="reset">Reset</button>
+          <div class="progress">
+            <div id="progressLabel">0 / 0</div>
+            <div class="bar"><span id="progressBar"></span></div>
+          </div>
+          <button type="button" data-action="next" aria-label="Next slide">&#8250;</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const TEAMS = ["Townsfolk", "Outsider", "Minion", "Demon", "Traveler", "Fabled"];
+
+    const ROLE_DATA = {
+      washerwoman: role("Washerwoman", "Townsfolk", 10, 0, "Wake the Washerwoman.", "Point to one Townsfolk and one wrong player."),
+      librarian: role("Librarian", "Townsfolk", 20, 0, "Wake the Librarian.", "Point to one Outsider and one wrong player, or show zero if no Outsiders are in play."),
+      investigator: role("Investigator", "Townsfolk", 30, 0, "Wake the Investigator.", "Point to one Minion and one wrong player."),
+      chef: role("Chef", "Townsfolk", 40, 0, "Wake the Chef.", "Show the number of evil pairs sitting next to each other."),
+      empath: role("Empath", "Townsfolk", 50, 60, "Wake the Empath.", "Show the number of evil living neighbors."),
+      fortune_teller: role("Fortune Teller", "Townsfolk", 60, 70, "Wake the Fortune Teller.", "They choose two players. Nod if either is a Demon, counting the red herring."),
+      undertaker: role("Undertaker", "Townsfolk", 0, 80, "Wake the Undertaker.", "Show the character token of the player executed today."),
+      monk: role("Monk", "Townsfolk", 0, 20, "Wake the Monk.", "They choose one player other than themself to protect from the Demon."),
+      ravenkeeper: role("Ravenkeeper", "Townsfolk", 0, 50, "Wake the Ravenkeeper if they died tonight.", "They choose a player. Show that player's character token."),
+      virgin: role("Virgin", "Townsfolk", 0, 0, "", "No night action."),
+      slayer: role("Slayer", "Townsfolk", 0, 0, "", "No night action."),
+      soldier: role("Soldier", "Townsfolk", 0, 0, "", "No night action."),
+      mayor: role("Mayor", "Townsfolk", 0, 0, "", "No night action."),
+      butler: role("Butler", "Outsider", 70, 90, "Wake the Butler.", "They choose a master. Track their vote restriction."),
+      drunk: role("Drunk", "Outsider", 0, 0, "", "No night action. Remember which Townsfolk token they saw."),
+      recluse: role("Recluse", "Outsider", 0, 0, "", "No night action."),
+      saint: role("Saint", "Outsider", 0, 0, "", "No night action."),
+      poisoner: role("Poisoner", "Minion", 5, 10, "Wake the Poisoner.", "They choose one player to poison until dusk."),
+      spy: role("Spy", "Minion", 90, 100, "Wake the Spy.", "Show the grimoire."),
+      scarlet_woman: role("Scarlet Woman", "Minion", 0, 30, "Wake the Scarlet Woman if the Demon died with five or more players alive.", "Show that they are now the Demon."),
+      baron: role("Baron", "Minion", 0, 0, "", "No night action after setup."),
+      imp: role("Imp", "Demon", 0, 40, "Wake the Imp.", "They choose a player. That player dies. If the Imp kills themself, choose an alive Minion to become the Imp."),
+
+      grandmother: role("Grandmother", "Townsfolk", 10, 0, "Wake the Grandmother.", "Point to their grandchild and show that player's character token."),
+      sailor: role("Sailor", "Townsfolk", 20, 20, "Wake the Sailor.", "They choose a living player. One of the two is drunk until dusk."),
+      chambermaid: role("Chambermaid", "Townsfolk", 30, 60, "Wake the Chambermaid.", "They choose two alive players. Show how many woke tonight due to their own ability."),
+      exorcist: role("Exorcist", "Townsfolk", 35, 30, "Wake the Exorcist.", "They choose a player. If they chose the Demon, the Demon learns who chose them and does not act."),
+      innkeeper: role("Innkeeper", "Townsfolk", 0, 25, "Wake the Innkeeper.", "They choose two players. Those players are safe from the Demon and one is drunk."),
+      gambler: role("Gambler", "Townsfolk", 0, 65, "Wake the Gambler.", "They choose a player and guess a character. Mark them to die if wrong."),
+      gossip: role("Gossip", "Townsfolk", 0, 0, "", "No night action. Resolve their public statement at night if true."),
+      courtier: role("Courtier", "Townsfolk", 40, 40, "Wake the Courtier if using their ability.", "They choose a character. That character is drunk for three nights and days."),
+      professor: role("Professor", "Townsfolk", 0, 70, "Wake the Professor if using their ability.", "They choose a dead player. If valid, that player lives."),
+      minstrel: role("Minstrel", "Townsfolk", 0, 0, "", "No night action. Drunkenness is automatic after Minion execution."),
+      tea_lady: role("Tea Lady", "Townsfolk", 0, 0, "", "No night action."),
+      pacifist: role("Pacifist", "Townsfolk", 0, 0, "", "No night action."),
+      fool: role("Fool", "Townsfolk", 0, 0, "", "No night action."),
+      goon: role("Goon", "Outsider", 0, 0, "", "No wake-up. Apply drunkenness and alignment change when chosen."),
+      lunatic: role("Lunatic", "Outsider", 55, 45, "Wake the Lunatic.", "Let them choose targets as though they are the Demon. Do not kill from this choice."),
+      tinker: role("Tinker", "Outsider", 0, 0, "", "May die at any time."),
+      moonchild: role("Moonchild", "Outsider", 0, 75, "Wake the Moonchild if they died today.", "They choose a living player. If that player is good, that player dies."),
+      godfather: role("Godfather", "Minion", 8, 85, "Wake the Godfather.", "First night: show which Outsiders are in play. Other nights: if an Outsider died today, choose a player to die."),
+      devil_advocate: role("Devil's Advocate", "Minion", 0, 15, "Wake the Devil's Advocate.", "They choose a living player. That player survives execution tomorrow."),
+      assassin: role("Assassin", "Minion", 0, 55, "Wake the Assassin if using their ability.", "They choose a player. That player dies, even if protected."),
+      mastermind: role("Mastermind", "Minion", 0, 0, "", "No night action."),
+      zombuul: role("Zombuul", "Demon", 0, 35, "Wake the Zombuul if no one died today.", "They choose a player. That player dies."),
+      pukka: role("Pukka", "Demon", 50, 35, "Wake the Pukka.", "They choose a player to poison. The previously poisoned player dies."),
+      shabaloth: role("Shabaloth", "Demon", 0, 35, "Wake the Shabaloth.", "They choose two players. Those players die. You may regurgitate a dead player."),
+      po: role("Po", "Demon", 0, 35, "Wake the Po.", "They either choose no one and charge, or choose three players to die if charged."),
+
+      clockmaker: role("Clockmaker", "Townsfolk", 10, 0, "Wake the Clockmaker.", "Show the shortest distance from Demon to nearest Minion."),
+      dreamer: role("Dreamer", "Townsfolk", 20, 45, "Wake the Dreamer.", "They choose a player. Show one good and one evil character, one of which is true."),
+      snake_charmer: role("Snake Charmer", "Townsfolk", 30, 15, "Wake the Snake Charmer.", "They choose a player. If Demon, swap characters and alignments."),
+      mathematician: role("Mathematician", "Townsfolk", 40, 90, "Wake the Mathematician.", "Show how many players' abilities malfunctioned today due to another ability."),
+      flowergirl: role("Flowergirl", "Townsfolk", 0, 70, "Wake the Flowergirl.", "Show whether a Demon voted today."),
+      town_crier: role("Town Crier", "Townsfolk", 0, 75, "Wake the Town Crier.", "Show whether a Minion nominated today."),
+      oracle: role("Oracle", "Townsfolk", 0, 80, "Wake the Oracle.", "Show how many dead players are evil."),
+      savant: role("Savant", "Townsfolk", 0, 0, "", "No night action."),
+      seamstress: role("Seamstress", "Townsfolk", 45, 55, "Wake the Seamstress if using their ability.", "They choose two players. Show whether they have the same alignment."),
+      philosopher: role("Philosopher", "Townsfolk", 50, 25, "Wake the Philosopher if using their ability.", "They choose a good character ability to gain. Drunk that character if needed."),
+      artist: role("Artist", "Townsfolk", 0, 0, "", "No night action."),
+      juggler: role("Juggler", "Townsfolk", 0, 0, "", "No night action. Answer after dusk if they juggled today."),
+      sage: role("Sage", "Townsfolk", 0, 50, "Wake the Sage if killed by the Demon.", "Point to two players, one of whom is the Demon that killed them."),
+      mutant: role("Mutant", "Outsider", 0, 0, "", "No night action."),
+      sweetheart: role("Sweetheart", "Outsider", 0, 0, "", "No night action. When they die, make one player drunk."),
+      barber: role("Barber", "Outsider", 0, 35, "If the Barber died today, wake the Demon.", "The Demon may swap two players' characters."),
+      klutz: role("Klutz", "Outsider", 0, 0, "", "No night action."),
+      evil_twin: role("Evil Twin", "Minion", 6, 0, "Wake the Evil Twin and Good Twin.", "Show each twin the other player and the other's character."),
+      witch: role("Witch", "Minion", 0, 10, "Wake the Witch.", "They choose a player. That player dies if they nominate tomorrow."),
+      cerenovus: role("Cerenovus", "Minion", 0, 20, "Wake the Cerenovus.", "They choose a player and a good character for madness."),
+      pit_hag: role("Pit-Hag", "Minion", 0, 30, "Wake the Pit-Hag.", "They choose a player and a character. Change that player into that character."),
+      fang_gu: role("Fang Gu", "Demon", 0, 40, "Wake the Fang Gu.", "They choose a player. That player dies. If an Outsider was chosen for the first time, they become the Fang Gu and the old Fang Gu dies."),
+      vigormortis: role("Vigormortis", "Demon", 0, 40, "Wake the Vigormortis.", "They choose a player. That player dies. Minions killed this way keep their ability and poison a Townsfolk neighbor."),
+      no_dashii: role("No Dashii", "Demon", 0, 40, "Wake the No Dashii.", "They choose a player. That player dies."),
+      vortox: role("Vortox", "Demon", 0, 40, "Wake the Vortox.", "They choose a player. That player dies. Townsfolk information must be false.")
+    };
+
+    const SCRIPTS = [
+      script("tb", "Trouble Brewing", ["washerwoman", "librarian", "investigator", "chef", "empath", "fortune_teller", "undertaker", "monk", "ravenkeeper", "virgin", "slayer", "soldier", "mayor", "butler", "drunk", "recluse", "saint", "poisoner", "spy", "scarlet_woman", "baron", "imp"]),
+      script("bmr", "Bad Moon Rising", ["grandmother", "sailor", "chambermaid", "exorcist", "innkeeper", "gambler", "gossip", "courtier", "professor", "minstrel", "tea_lady", "pacifist", "fool", "goon", "lunatic", "tinker", "moonchild", "godfather", "devil_advocate", "assassin", "mastermind", "zombuul", "pukka", "shabaloth", "po"]),
+      script("sv", "Sects & Violets", ["clockmaker", "dreamer", "snake_charmer", "mathematician", "flowergirl", "town_crier", "oracle", "savant", "seamstress", "philosopher", "artist", "juggler", "sage", "mutant", "sweetheart", "barber", "klutz", "evil_twin", "witch", "cerenovus", "pit_hag", "fang_gu", "vigormortis", "no_dashii", "vortox"])
+    ];
+
+    const state = {
+      scriptId: "tb",
+      phase: "first",
+      selected: new Set(SCRIPTS[0].roles),
+      slides: [],
+      slideIndex: 0
+    };
+
+    const els = {
+      status: document.querySelector("#status"),
+      scriptRow: document.querySelector("#scriptRow"),
+      scriptMeta: document.querySelector("#scriptMeta"),
+      nightMeta: document.querySelector("#nightMeta"),
+      roleCount: document.querySelector("#roleCount"),
+      roleGroups: document.querySelector("#roleGroups"),
+      setupView: document.querySelector("#setupView"),
+      deckView: document.querySelector("#deckView"),
+      deck: document.querySelector("#deck"),
+      progressLabel: document.querySelector("#progressLabel"),
+      progressBar: document.querySelector("#progressBar"),
+      customJson: document.querySelector("#customJson")
+    };
+
+    hydrateFromUrl();
+    renderAll();
+    generateDeck(false);
+
+    document.addEventListener("click", (event) => {
+      const button = event.target.closest("button");
+      if (!button) return;
+
+      const view = button.dataset.view;
+      const action = button.dataset.action;
+      const phase = button.dataset.phase;
+      const scriptId = button.dataset.script;
+
+      if (view) setView(view);
+      if (phase) setPhase(phase);
+      if (scriptId) setScript(scriptId);
+      if (action) runAction(action);
+    });
+
+    document.addEventListener("change", (event) => {
+      const input = event.target.closest("input[data-role]");
+      if (!input) return;
+      if (input.checked) state.selected.add(input.dataset.role);
+      else state.selected.delete(input.dataset.role);
+      persist();
+      renderCounts();
+      generateDeck(false);
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowRight") moveSlide(1);
+      if (event.key === "ArrowLeft") moveSlide(-1);
+    });
+
+    let touchStartX = 0;
+    let touchStartY = 0;
+    els.deck.addEventListener("touchstart", (event) => {
+      const touch = event.changedTouches[0];
+      touchStartX = touch.clientX;
+      touchStartY = touch.clientY;
+    }, { passive: true });
+
+    els.deck.addEventListener("touchend", (event) => {
+      const touch = event.changedTouches[0];
+      const dx = touch.clientX - touchStartX;
+      const dy = touch.clientY - touchStartY;
+      if (Math.abs(dx) > 42 && Math.abs(dx) > Math.abs(dy) * 1.2) {
+        moveSlide(dx < 0 ? 1 : -1);
+      }
+    }, { passive: true });
+
+    function role(name, team, first, other, wake, detail) {
+      return { name, team, first, other, wake, detail };
+    }
+
+    function script(id, name, roles) {
+      return { id, name, roles };
+    }
+
+    function currentScript() {
+      return SCRIPTS.find((item) => item.id === state.scriptId) || SCRIPTS[0];
+    }
+
+    function renderAll() {
+      renderScripts();
+      renderPhase();
+      renderRoles();
+      renderCounts();
+    }
+
+    function renderScripts() {
+      els.scriptRow.innerHTML = SCRIPTS.map((item) => `
+        <button class="script-chip" type="button" data-script="${item.id}" aria-pressed="${item.id === state.scriptId}">
+          ${escapeHtml(item.name)}
+        </button>
+      `).join("");
+      els.scriptMeta.textContent = `${currentScript().roles.length} roles`;
+    }
+
+    function renderPhase() {
+      document.querySelectorAll("[data-phase]").forEach((button) => {
+        button.setAttribute("aria-pressed", String(button.dataset.phase === state.phase));
+      });
+      els.nightMeta.textContent = "";
+    }
+
+    function renderRoles() {
+      const roles = currentScript().roles.map((id) => [id, ROLE_DATA[id] || unknownRole(id)]);
+      els.roleGroups.innerHTML = TEAMS.map((team) => {
+        const teamRoles = roles.filter(([, roleItem]) => roleItem.team === team);
+        if (!teamRoles.length) return "";
+        return `
+          <div class="role-group">
+            <h3>${team}</h3>
+            <div class="roles">
+              ${teamRoles.map(([id, roleItem]) => roleCheckbox(id, roleItem)).join("")}
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function roleCheckbox(id, roleItem) {
+      const checked = state.selected.has(id) ? "checked" : "";
+      return `
+        <label class="role">
+          <input type="checkbox" data-role="${id}" ${checked} />
+          <strong>${escapeHtml(roleItem.name)}</strong>
+        </label>
+      `;
+    }
+
+    function renderCounts() {
+      const active = currentScript().roles.filter((id) => state.selected.has(id)).length;
+      els.roleCount.textContent = `${active} selected`;
+      els.status.textContent = state.slides.length ? `${state.slides.length} slides` : "No deck";
+    }
+
+    function setView(view) {
+      document.querySelectorAll("[data-view]").forEach((button) => {
+        button.setAttribute("aria-selected", String(button.dataset.view === view));
+      });
+      els.setupView.classList.toggle("active", view === "setup");
+      els.deckView.classList.toggle("active", view === "deck");
+    }
+
+    function setPhase(phase) {
+      state.phase = phase;
+      renderPhase();
+      renderRoles();
+      persist();
+      generateDeck(true);
+    }
+
+    function setScript(scriptId) {
+      state.scriptId = scriptId;
+      const scriptItem = currentScript();
+      state.selected = new Set(scriptItem.roles);
+      state.slideIndex = 0;
+      renderAll();
+      persist();
+      generateDeck(false);
+    }
+
+    function runAction(action) {
+      if (action === "select-defaults") {
+        state.selected = new Set(currentScript().roles);
+        renderRoles();
+        renderCounts();
+        persist();
+        generateDeck(false);
+      }
+      if (action === "clear") {
+        state.selected.clear();
+        renderRoles();
+        renderCounts();
+        persist();
+        generateDeck(false);
+      }
+      if (action === "generate") {
+        generateDeck(true);
+        setView("deck");
+      }
+      if (action === "previous") moveSlide(-1);
+      if (action === "next") moveSlide(1);
+      if (action === "reset") resetDeck();
+      if (action === "copy-link") copyStateLink();
+      if (action === "export") exportDeck();
+      if (action === "load-custom") loadCustomScript();
+    }
+
+    function generateDeck(resetIndex) {
+      const scriptItem = currentScript();
+      const selected = scriptItem.roles.filter((id) => state.selected.has(id));
+      const roles = selected.map((id) => ({ id, ...ROLE_DATA[id] || unknownRole(id) }));
+      const phaseKey = state.phase === "first" ? "first" : "other";
+      const slides = [];
+      const minions = roles.filter((item) => item.team === "Minion");
+      const demons = roles.filter((item) => item.team === "Demon");
+
+      if (state.phase === "first") {
+        if (minions.length) {
+          slides.push(instructionSlide("Minions", "Wake up the Minions", "Have all Minions open their eyes."));
+          slides.push(specialSlide("Minions", "You are Minions", "Show them each other."));
+          if (demons.length) {
+            slides.push(specialSlide("Demon", "THIS IS YOUR DEMON", "Point to the Demon."));
+          }
+        }
+        if (demons.length) {
+          slides.push(instructionSlide("Demon", "Wake up the Demon", "Have the Demon open their eyes."));
+          slides.push(specialSlide("Minions", "These are your Minions", minions.length ? "Point to the Minions." : "Show that there are no Minions."));
+        }
+      }
+
+      roles
+        .filter((item) => Number(item[phaseKey]) > 0 && item.wake)
+        .sort((a, b) => a[phaseKey] - b[phaseKey] || a.name.localeCompare(b.name))
+        .forEach((item) => {
+          slides.push({
+            kind: "role",
+            title: item.name,
+            label: `${state.phase === "first" ? "First night" : "Rest of nights"} - ${scriptItem.name}`,
+            action: item.wake,
+            detail: item.detail,
+            footer: `${item.team} - order ${item[phaseKey]}`
+          });
+        });
+
+      if (!slides.length) {
+        slides.push(specialSlide("No Wakes", "No active night actions", "Change the phase or select roles with night actions."));
+      }
+
+      state.slides = slides;
+      if (resetIndex) state.slideIndex = 0;
+      state.slideIndex = clamp(state.slideIndex, 0, slides.length - 1);
+      renderDeck();
+      renderCounts();
+    }
+
+    function specialSlide(title, action, detail) {
+      return {
+        kind: "special",
+        title,
+        label: "Storyteller instruction",
+        action,
+        detail,
+        footer: "High-contrast information slide"
+      };
+    }
+
+    function instructionSlide(title, action, detail) {
+      return {
+        kind: "role",
+        title,
+        label: "Storyteller instruction",
+        action,
+        detail,
+        footer: "Night setup"
+      };
+    }
+
+    function renderDeck() {
+      els.deck.innerHTML = state.slides.map((slide, index) => `
+        <article class="slide ${slide.kind === "special" ? "special" : ""} ${index === state.slideIndex ? "active" : ""}">
+          <div class="slide-main">
+            <p class="action">${escapeHtml(slide.action)}</p>
+            <p class="detail">${escapeHtml(slide.detail)}</p>
+          </div>
+        </article>
+      `).join("");
+      els.progressLabel.textContent = `${state.slideIndex + 1} / ${state.slides.length}`;
+      els.progressBar.style.width = `${((state.slideIndex + 1) / state.slides.length) * 100}%`;
+    }
+
+    function moveSlide(delta) {
+      if (!state.slides.length) return;
+      state.slideIndex = clamp(state.slideIndex + delta, 0, state.slides.length - 1);
+      renderDeck();
+    }
+
+    function resetDeck() {
+      if (!state.slides.length) return;
+      state.slideIndex = 0;
+      renderDeck();
+    }
+
+    function loadCustomScript() {
+      let parsed;
+      try {
+        parsed = JSON.parse(els.customJson.value);
+      } catch (error) {
+        alert("The custom script JSON could not be parsed.");
+        return;
+      }
+      if (!Array.isArray(parsed)) {
+        alert("Script JSON must be an array.");
+        return;
+      }
+      const ids = parsed
+        .map((entry) => typeof entry === "string" ? entry : entry && entry.id)
+        .filter(Boolean)
+        .map(normalizeId);
+      if (!ids.length) {
+        alert("No role IDs were found.");
+        return;
+      }
+      SCRIPTS.push(script(`custom-${Date.now()}`, "Custom Script", ids));
+      ids.forEach((id) => {
+        if (!ROLE_DATA[id]) ROLE_DATA[id] = unknownRole(id);
+      });
+      state.scriptId = SCRIPTS[SCRIPTS.length - 1].id;
+      state.selected = new Set(ids);
+      state.slideIndex = 0;
+      renderAll();
+      persist();
+      generateDeck(false);
+    }
+
+    async function copyStateLink() {
+      const params = new URLSearchParams();
+      params.set("script", state.scriptId);
+      params.set("phase", state.phase);
+      params.set("roles", [...state.selected].join(","));
+      const url = `${location.origin}${location.pathname}?${params.toString()}`;
+      try {
+        await navigator.clipboard.writeText(url);
+        els.status.textContent = "Link copied";
+      } catch (error) {
+        prompt("Copy state link", url);
+      }
+    }
+
+    function exportDeck() {
+      generateDeck(false);
+      const html = standaloneHtml(state.slides, currentScript().name, state.phase);
+      const blob = new Blob([html], { type: "text/html" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `clocktower-${currentScript().id}-${state.phase}-deck.html`;
+      link.click();
+      URL.revokeObjectURL(link.href);
+    }
+
+    function standaloneHtml(slides, scriptName, phase) {
+      const slideJson = JSON.stringify(slides).replace(/</g, "\\u003c");
+      return `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>${escapeHtml(scriptName)} ${phase} deck</title>
+<style>${document.querySelector("style").textContent}</style>
+</head>
+<body>
+<div class="deck-view active" style="min-height:100svh">
+  <div class="deck" id="deck"></div>
+  <div class="deck-controls">
+    <button type="button" id="prev" aria-label="Previous slide">&#8249;</button>
+    <button type="button" id="reset">Reset</button>
+    <div class="progress"><div id="progressLabel"></div><div class="bar"><span id="progressBar"></span></div></div>
+    <button type="button" id="next" aria-label="Next slide">&#8250;</button>
+  </div>
+</div>
+<script>
+const slides=${slideJson};let slideIndex=0;
+const deck=document.querySelector("#deck"), label=document.querySelector("#progressLabel"), bar=document.querySelector("#progressBar");
+function escapeHtml(value){return String(value).replace(/[&<>"']/g,(char)=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[char]));}
+function render(){deck.innerHTML=slides.map((slide,index)=>\`<article class="slide \${slide.kind==="special"?"special":""} \${index===slideIndex?"active":""}"><div class="slide-main"><p class="action">\${escapeHtml(slide.action)}</p><p class="detail">\${escapeHtml(slide.detail)}</p></div></article>\`).join("");label.textContent=\`\${slideIndex+1} / \${slides.length}\`;bar.style.width=\`\${((slideIndex+1)/slides.length)*100}%\`;}
+function move(delta){slideIndex=Math.max(0,Math.min(slides.length-1,slideIndex+delta));render();}
+document.querySelector("#prev").addEventListener("click",()=>move(-1));document.querySelector("#next").addEventListener("click",()=>move(1));document.querySelector("#reset").addEventListener("click",()=>{slideIndex=0;render();});
+document.addEventListener("keydown",(event)=>{if(event.key==="ArrowRight")move(1);if(event.key==="ArrowLeft")move(-1);});
+let sx=0,sy=0;deck.addEventListener("touchstart",(event)=>{const t=event.changedTouches[0];sx=t.clientX;sy=t.clientY;},{passive:true});deck.addEventListener("touchend",(event)=>{const t=event.changedTouches[0],dx=t.clientX-sx,dy=t.clientY-sy;if(Math.abs(dx)>42&&Math.abs(dx)>Math.abs(dy)*1.2)move(dx<0?1:-1);},{passive:true});
+render();
+<\/script>
+</body>
+</html>`;
+    }
+
+    function persist() {
+      const value = {
+        scriptId: state.scriptId,
+        phase: state.phase,
+        selected: [...state.selected]
+      };
+      localStorage.setItem("clocktower-night-assist", JSON.stringify(value));
+    }
+
+    function hydrateFromUrl() {
+      let saved = null;
+      try {
+        saved = JSON.parse(localStorage.getItem("clocktower-night-assist") || "null");
+      } catch (error) {
+        saved = null;
+      }
+
+      const params = new URLSearchParams(location.search);
+      const scriptId = params.get("script") || (saved && saved.scriptId);
+      const phase = params.get("phase") || (saved && saved.phase);
+      const roles = params.get("roles") ? params.get("roles").split(",") : saved && saved.selected;
+
+      if (scriptId && SCRIPTS.some((item) => item.id === scriptId)) state.scriptId = scriptId;
+      if (phase === "first" || phase === "other") state.phase = phase;
+      if (Array.isArray(roles)) state.selected = new Set(roles.map(normalizeId));
+    }
+
+    function normalizeId(value) {
+      return String(value).trim().toLowerCase().replace(/[\s-]+/g, "_").replace(/[^a-z0-9_]/g, "");
+    }
+
+    function unknownRole(id) {
+      return {
+        name: titleize(id),
+        team: "Townsfolk",
+        first: 0,
+        other: 0,
+        wake: "",
+        detail: "No built-in night instruction for this custom role."
+      };
+    }
+
+    function titleize(id) {
+      return String(id).replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
+    }
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      }[char]));
+    }
+  </script>
+</body>
+</html>
