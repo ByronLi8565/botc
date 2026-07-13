@@ -545,6 +545,7 @@
     let ROLE_DATA = {};
     let SCRIPTS = [];
     let ROLE_ALIASES = {};
+    const DATA_VERSION = "2";
     const state = {
       scriptId: "",
       phase: "first",
@@ -665,7 +666,7 @@
     }
 
     async function loadJson(url) {
-      const response = await fetch(url);
+      const response = await fetch(`${url}?v=${DATA_VERSION}`, { cache: "no-cache" });
       if (!response.ok) throw new Error(`Could not load ${url} (${response.status})`);
       return response.json();
     }

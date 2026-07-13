@@ -35,3 +35,7 @@ orders, the canonical order numbers in the role catalogs are used.
 
 The browser validates required fields, duplicate IDs, night instructions, and
 missing manifest references before rendering the app.
+
+When changing the data schema or bundled files, increment `DATA_VERSION` in
+`public/index.html` so a newly deployed loader cannot receive an older cached
+manifest or catalog.
